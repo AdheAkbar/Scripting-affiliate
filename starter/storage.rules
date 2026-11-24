@@ -1,0 +1,16 @@
+rules_version = '2';
+// Foto produk: maks 5 MB, hanya gambar, hanya owner.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /products/{productId}/photos/{fileName} {
+      allow read, delete: if request.auth != null
+        && request.auth.token.email == 'akbarade68@gmail.com'
+        && request.auth.token.email_verified == true;
+      allow create: if request.auth != null
+        && request.auth.token.email == 'akbarade68@gmail.com'
+        && request.auth.token.email_verified == true
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp|heic)');
+    }
+  }
+}

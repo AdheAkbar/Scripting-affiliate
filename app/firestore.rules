@@ -1,0 +1,45 @@
+rules_version = '2';
+// Aplikasi 1 orang (Starter Tier): server memakai ID token owner, jadi "tulis khusus server" tidak bermakna.
+// Aturan: hanya owner; dokumen wajib milik owner; apiRuns append-only (log pemakaian tidak bisa diubah/dihapus).
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'akbarade68@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+    function ownsNew() {
+      return request.resource.data.ownerUid == request.auth.uid;
+    }
+    function ownsExisting() {
+      return resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid;
+    }
+
+    match /appConfig/owner {
+      allow read, create, update: if isOwner();
+    }
+
+    match /brands/{id} {
+      allow read: if isOwner();
+      allow create: if isOwner() && ownsNew();
+      allow update: if isOwner() && ownsExisting();
+      allow delete: if isOwner() && resource.data.ownerUid == request.auth.uid;
+    }
+
+    match /scripts/{id} {
+      allow read: if isOwner();
+      allow create: if isOwner() && ownsNew() && request.resource.size() < 900000;
+      allow update: if isOwner() && ownsExisting();
+      allow delete: if isOwner() && resource.data.ownerUid == request.auth.uid;
+    }
+
+    match /apiRuns/{id} {
+      allow read: if isOwner();
+      allow create: if isOwner() && ownsNew()
+        && request.resource.data.stageName is string
+        && request.resource.data.status in ['success', 'repaired', 'failed', 'refused']
+        && request.resource.data.estCostUsd is number;
+    }
+  }
+}

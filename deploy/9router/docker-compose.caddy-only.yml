@@ -1,0 +1,20 @@
+# Untuk server yang SUDAH menjalankan 9router di port 20128 (npm/pm2/docker apa pun).
+# Hanya menambahkan Caddy (HTTPS otomatis) di depan 9router; tidak menyentuh 9router.
+# Jalankan: DOMAIN=3-26-235-167.sslip.io docker compose -f docker-compose.caddy-only.yml up -d
+services:
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    restart: always
+    network_mode: host # supaya bisa menjangkau localhost:20128 di host
+    environment:
+      DOMAIN: ${DOMAIN:?isi DOMAIN, mis. 3-26-235-167.sslip.io}
+      UPSTREAM: localhost:20128
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  caddy-data:
+  caddy-config:

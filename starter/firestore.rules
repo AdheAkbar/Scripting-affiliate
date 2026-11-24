@@ -1,0 +1,73 @@
+rules_version = '2';
+// Sumber: docs/erd.md §6. Email owner sudah diisi; ubah di sini jika ganti akun.
+// Server (firebase-admin) melewati rules ini; rules hanya mengatur akses dari aplikasi di HP/browser.
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'akbarade68@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+    function ownsNew() {
+      return request.resource.data.ownerUid == request.auth.uid;
+    }
+    function keepsOwner() {
+      return request.resource.data.ownerUid == resource.data.ownerUid;
+    }
+
+    // Default: owner boleh membaca semua koleksi aplikasi.
+    match /{col}/{id} {
+      allow read: if isOwner();
+    }
+
+    // Koleksi input yang boleh ditulis langsung dari aplikasi.
+    match /brands/{id} {
+      allow create: if isOwner() && ownsNew()
+        && !request.resource.data.keys().hasAny(['cachedSystemBlock', 'cachedSystemBlockTokens']);
+      allow update: if isOwner() && keepsOwner()
+        && !request.resource.data.diff(resource.data).affectedKeys()
+             .hasAny(['cachedSystemBlock', 'cachedSystemBlockTokens']);
+      allow delete: if isOwner();
+    }
+    match /products/{id} {
+      allow create: if isOwner() && ownsNew();
+      allow update: if isOwner() && keepsOwner()
+        && !request.resource.data.diff(resource.data).affectedKeys()
+             .hasAny(['scrapeStatus', 'scrapedSpecs']);
+      allow delete: if isOwner();
+    }
+    match /viralReferences/{id} {
+      allow create: if isOwner() && ownsNew() && !('extractedPattern' in request.resource.data);
+      allow delete: if isOwner();
+    }
+    match /performanceLogs/{id} {
+      // score & isWinning hanya dihitung server
+      allow create: if isOwner() && ownsNew()
+        && !request.resource.data.keys().hasAny(['score', 'isWinning']);
+      allow update: if isOwner() && keepsOwner()
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['score', 'isWinning']);
+      allow delete: if isOwner();
+    }
+    match /ideas/{id} {
+      allow create: if isOwner() && ownsNew();
+      allow update: if isOwner() && keepsOwner();
+      allow delete: if isOwner();
+    }
+
+    match /scripts/{id} {
+      // Edit inline draft: teks saja. Status 'ready' hanya diset server setelah audit lolos.
+      allow update: if isOwner()
+        && resource.data.status == 'draft'
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['scenes', 'postingPacks', 'totalEstSec']);
+      // Progres produksi: ready -> recorded -> posted
+      allow update: if isOwner()
+        && resource.data.status in ['ready', 'recorded']
+        && request.resource.data.status in ['recorded', 'posted']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+    }
+
+    // appConfig, trendSnapshots, briefs, angles, hooks, apiRuns, scripts(create/delete):
+    // hanya server. Tidak ada aturan write = ditolak untuk client.
+  }
+}

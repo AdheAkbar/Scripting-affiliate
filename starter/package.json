@@ -1,0 +1,18 @@
+{
+  "name": "affiliate-script-studio-starter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "bundle": "node scripts/bundle.mjs"
+  },
+  "dependencies": {
+    "openai": "^7.62.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  }
+}

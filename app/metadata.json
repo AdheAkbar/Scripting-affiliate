@@ -1,0 +1,6 @@
+{
+  "name": "Affiliate Script Studio",
+  "description": "Studio internal untuk menyusun naskah video affiliate TikTok Shop & Shopee Video berbasis riset tren dan fakta terverifikasi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

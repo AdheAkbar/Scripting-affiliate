@@ -1,0 +1,384 @@
+{
+  "entities": {
+    "AppConfig": {
+      "title": "AppConfig",
+      "description": "Global single-owner configuration including owner email allowlist, monthly AI budget cap in USD, and active brand reference.",
+      "type": "object",
+      "properties": {
+        "ownerEmail": {
+          "type": "string",
+          "format": "email",
+          "description": "Allowlisted owner Google email address."
+        },
+        "monthlyBudgetUsd": {
+          "type": "number",
+          "description": "Monthly AI spending limit in USD (default 10)."
+        },
+        "activeBrandId": {
+          "type": "string",
+          "description": "Document ID of the active Brand profile."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["ownerEmail", "monthlyBudgetUsd"]
+    },
+    "Brand": {
+      "title": "Brand",
+      "description": "Brand DNA profile defining persona, tone, visual aesthetic, target audience, platforms, recording mode, WPM, banned phrases, and style examples.",
+      "type": "object",
+      "properties": {
+        "ownerUid": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Firebase Auth UID of the owner."
+        },
+        "accountName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Affiliate account display name."
+        },
+        "personaTone": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Voice persona and tone guidelines."
+        },
+        "visualAesthetic": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Visual filming aesthetic notes."
+        },
+        "targetAudience": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Primary buyer audience profile."
+        },
+        "primaryPlatforms": {
+          "type": "array",
+          "description": "Target short-video platforms (tiktok, shopee, reels, shorts)."
+        },
+        "defaultFormat": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "talking_head",
+            "faceless_vo",
+            "pov",
+            "before_after",
+            "unboxing_first_impression",
+            "comparison",
+            "tutorial_demo",
+            "grwm_routine",
+            "listicle"
+          ],
+          "description": "Default video format or auto selection."
+        },
+        "faceMode": {
+          "type": "string",
+          "enum": ["face", "faceless", "mixed"],
+          "description": "Recording mode preference."
+        },
+        "voiceoverWpm": {
+          "type": "integer",
+          "description": "Speaking pace in words per minute (110-180)."
+        },
+        "bannedPhrases": {
+          "type": "array",
+          "description": "Cliché phrases blocked from hooks and scripts."
+        },
+        "contentPillars": {
+          "type": "array",
+          "description": "Brand content pillars."
+        },
+        "styleExamples": {
+          "type": "array",
+          "description": "Up to 5 authentic creator style example sentences."
+        },
+        "cachedSystemBlock": {
+          "type": "string",
+          "description": "Server-computed prompt caching system block."
+        },
+        "cachedSystemBlockTokens": {
+          "type": "integer",
+          "description": "Estimated token count for cachedSystemBlock."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp."
+        }
+      },
+      "required": [
+        "ownerUid",
+        "accountName",
+        "personaTone",
+        "visualAesthetic",
+        "targetAudience",
+        "primaryPlatforms",
+        "defaultFormat",
+        "faceMode",
+        "voiceoverWpm",
+        "bannedPhrases",
+        "contentPillars",
+        "styleExamples"
+      ]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Affiliate product input with source link, pricing, Storage photo paths, and real creator notes.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "brandId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "category": {
+          "type": "string",
+          "enum": ["skincare_beauty", "gadget_elektronik", "fashion", "rumah_tangga", "kesehatan_kebugaran", "makanan_minuman", "lainnya"]
+        },
+        "sourceUrl": { "type": "string", "format": "uri" },
+        "marketplace": { "type": "string", "enum": ["tiktok_shop", "shopee", "tokopedia", "lazada", "other"] },
+        "priceIdr": { "type": "integer" },
+        "strikePriceIdr": { "type": "integer" },
+        "commissionPct": { "type": "number" },
+        "promoNotes": { "type": "string" },
+        "scrapeStatus": { "type": "string", "enum": ["pending", "success", "partial", "failed", "manual_only"] },
+        "scrapedSpecs": { "type": "object" },
+        "photoPaths": { "type": "array" },
+        "manualDescription": { "type": "string" },
+        "creatorNotes": { "type": "string", "minLength": 1 }
+      },
+      "required": ["ownerUid", "brandId", "name", "category", "creatorNotes"]
+    },
+    "TrendSnapshot": {
+      "title": "TrendSnapshot",
+      "description": "Cached marketplace and short-video trend research snapshot.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "category": { "type": "string" },
+        "platform": { "type": "string", "enum": ["tiktok", "shopee", "reels", "shorts"] },
+        "items": { "type": "array" },
+        "campaignMoments": { "type": "array" }
+      },
+      "required": ["ownerUid", "category", "platform", "items"]
+    },
+    "ViralReference": {
+      "title": "ViralReference",
+      "description": "Reference short video or transcript analyzed for structural pattern.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "brandId": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" },
+        "pastedText": { "type": "string" },
+        "extractedPattern": { "type": "object" },
+        "tags": { "type": "array" }
+      },
+      "required": ["ownerUid", "brandId"]
+    },
+    "Brief": {
+      "title": "Brief",
+      "description": "Product research brief with verified facts and forbidden claims.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "productId": { "type": "string", "minLength": 1 },
+        "trendSnapshotId": { "type": "string" },
+        "painPoints": { "type": "array" },
+        "buyingTriggers": { "type": "array" },
+        "objections": { "type": "array" },
+        "competitorGaps": { "type": "array" },
+        "verifiedFacts": { "type": "array" },
+        "forbiddenClaims": { "type": "array" },
+        "rawSources": { "type": "array" },
+        "editedByOwner": { "type": "boolean" },
+        "factsLocked": { "type": "boolean" }
+      },
+      "required": ["ownerUid", "productId", "verifiedFacts"]
+    },
+    "Angle": {
+      "title": "Angle",
+      "description": "Generated selling angle for a product brief.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "briefId": { "type": "string", "minLength": 1 },
+        "productId": { "type": "string", "minLength": 1 },
+        "angleTitle": { "type": "string", "minLength": 1 },
+        "sellingStyle": { "type": "string" },
+        "videoFormat": { "type": "string" },
+        "targetAwareness": { "type": "string" },
+        "whyItFits": { "type": "string" },
+        "trendItemRefs": { "type": "array" },
+        "productionNeeds": { "type": "object" },
+        "isSelected": { "type": "boolean" }
+      },
+      "required": ["ownerUid", "briefId", "productId", "angleTitle"]
+    },
+    "Hook": {
+      "title": "Hook",
+      "description": "Opening 3-second verbal, visual, and on-screen hook option.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "angleId": { "type": "string", "minLength": 1 },
+        "productId": { "type": "string", "minLength": 1 },
+        "psychologyType": { "type": "string" },
+        "verbalHook": { "type": "string", "minLength": 1 },
+        "visualHook": { "type": "string", "minLength": 1 },
+        "textOnScreen": { "type": "string", "minLength": 1 },
+        "inspiredBy": { "type": "string" },
+        "isFavorite": { "type": "boolean" }
+      },
+      "required": ["ownerUid", "angleId", "productId", "psychologyType", "verbalHook", "visualHook", "textOnScreen"]
+    },
+    "Script": {
+      "title": "Script",
+      "description": "Versioned affiliate video script with scenes, posting packs, facts snapshot, and audit.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "productId": { "type": "string", "minLength": 1 },
+        "angleId": { "type": "string", "minLength": 1 },
+        "rootScriptId": { "type": "string", "minLength": 1 },
+        "parentVersionId": { "type": "string" },
+        "versionNo": { "type": "integer" },
+        "revisionReason": { "type": "string" },
+        "selectedHookId": { "type": "string" },
+        "platformTargets": { "type": "array" },
+        "videoFormat": { "type": "string" },
+        "targetDurationSec": { "type": "object" },
+        "totalEstSec": { "type": "number" },
+        "scenes": { "type": "array" },
+        "postingPacks": { "type": "object" },
+        "strategicBreakdown": { "type": "object" },
+        "factsSnapshot": { "type": "array" },
+        "audit": { "type": "object" },
+        "status": { "type": "string", "enum": ["draft", "ready", "recorded", "posted"] }
+      },
+      "required": ["ownerUid", "productId", "angleId", "rootScriptId", "versionNo", "scenes", "postingPacks", "status"]
+    },
+    "PerformanceLog": {
+      "title": "PerformanceLog",
+      "description": "Manual post-publication metrics and server-computed winning score.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "scriptId": { "type": "string", "minLength": 1 },
+        "productId": { "type": "string", "minLength": 1 },
+        "platform": { "type": "string", "enum": ["tiktok", "shopee", "reels", "shorts"] },
+        "postUrl": { "type": "string", "format": "uri" },
+        "views": { "type": "integer" },
+        "likes": { "type": "integer" },
+        "comments": { "type": "integer" },
+        "shares": { "type": "integer" },
+        "productClicks": { "type": "integer" },
+        "unitsSold": { "type": "integer" },
+        "commissionIdr": { "type": "integer" },
+        "score": { "type": "number" },
+        "isWinning": { "type": "boolean" }
+      },
+      "required": ["ownerUid", "scriptId", "productId", "platform"]
+    },
+    "Idea": {
+      "title": "Idea",
+      "description": "Non-hard-sell content idea linked to brand content pillars.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "brandId": { "type": "string", "minLength": 1 },
+        "productId": { "type": "string" },
+        "pillarType": { "type": "string" },
+        "title": { "type": "string", "minLength": 1 },
+        "premise": { "type": "string", "minLength": 1 },
+        "brandingGoal": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "enum": ["idea", "planned", "done"] }
+      },
+      "required": ["ownerUid", "brandId", "pillarType", "title", "premise", "brandingGoal", "status"]
+    },
+    "ApiRun": {
+      "title": "ApiRun",
+      "description": "Server-logged AI pipeline run with token usage and estimated USD cost.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string", "minLength": 1 },
+        "entityType": { "type": "string", "minLength": 1 },
+        "entityId": { "type": "string", "minLength": 1 },
+        "stageName": { "type": "string" },
+        "modelName": { "type": "string" },
+        "effort": { "type": "string" },
+        "escalatedFrom": { "type": "string" },
+        "qualityGate": { "type": "object" },
+        "inputTokens": { "type": "integer" },
+        "cacheReadTokens": { "type": "integer" },
+        "cacheWriteTokens": { "type": "integer" },
+        "outputTokens": { "type": "integer" },
+        "webSearchCount": { "type": "integer" },
+        "estCostUsd": { "type": "number" },
+        "latencyMs": { "type": "integer" },
+        "status": { "type": "string", "enum": ["ok", "error", "escalated", "budget_blocked"] },
+        "errorMessage": { "type": "string" },
+        "monthKey": { "type": "string", "pattern": "^\\d{4}-(0[1-9]|1[0-2])$" }
+      },
+      "required": ["ownerUid", "entityType", "entityId", "stageName", "modelName", "estCostUsd", "status", "monthKey"]
+    }
+  },
+  "firestore": {
+    "/appConfig/{docId}": {
+      "schema": { "$ref": "#/entities/AppConfig" },
+      "description": "Single-owner app configuration document (appConfig/owner)."
+    },
+    "/brands/{brandId}": {
+      "schema": { "$ref": "#/entities/Brand" },
+      "description": "Owner Brand DNA profiles."
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Affiliate products owned by the studio owner."
+    },
+    "/trendSnapshots/{snapshotId}": {
+      "schema": { "$ref": "#/entities/TrendSnapshot" },
+      "description": "Cached category/platform trend snapshots."
+    },
+    "/viralReferences/{refId}": {
+      "schema": { "$ref": "#/entities/ViralReference" },
+      "description": "Saved viral video references and extracted patterns."
+    },
+    "/briefs/{briefId}": {
+      "schema": { "$ref": "#/entities/Brief" },
+      "description": "Verified product research briefs."
+    },
+    "/angles/{angleId}": {
+      "schema": { "$ref": "#/entities/Angle" },
+      "description": "Selling angles generated per product brief."
+    },
+    "/hooks/{hookId}": {
+      "schema": { "$ref": "#/entities/Hook" },
+      "description": "3-second hook variations per angle."
+    },
+    "/scripts/{scriptId}": {
+      "schema": { "$ref": "#/entities/Script" },
+      "description": "Versioned scripts with scenes, posting packs, and audit results."
+    },
+    "/performanceLogs/{logId}": {
+      "schema": { "$ref": "#/entities/PerformanceLog" },
+      "description": "Post-publish performance logs per script."
+    },
+    "/ideas/{ideaId}": {
+      "schema": { "$ref": "#/entities/Idea" },
+      "description": "Content pillar ideas backlog."
+    },
+    "/apiRuns/{runId}": {
+      "schema": { "$ref": "#/entities/ApiRun" },
+      "description": "Monthly AI usage and cost ledger."
+    }
+  }
+}

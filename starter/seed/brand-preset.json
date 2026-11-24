@@ -1,0 +1,80 @@
+{
+  "_note": "Seed Fase 0. Isi accountName/personaTone/dll sesuai akun Anda; semua bisa diubah di layar Brand. ownerUid diisi otomatis saat login.",
+  "appConfig": {
+    "ownerEmail": "akbarade68@gmail.com",
+    "monthlyBudgetUsd": 10
+  },
+  "brand": {
+    "accountName": "dhesell",
+    "personaTone": "Teman yang jujur dan santai; ngomong seperti cerita ke teman, bukan iklan. Sedikit humor, tidak lebay.",
+    "visualAesthetic": "Bersih dan terang, cahaya natural, close-up tangan dan tekstur produk, meja rapi.",
+    "targetAudience": "Perempuan & laki-laki 18–45 tahun di Indonesia, belanja online di TikTok Shop dan Shopee, sensitif harga, suka review jujur.",
+    "primaryPlatforms": ["tiktok", "shopee"],
+    "defaultFormat": "auto",
+    "faceMode": "mixed",
+    "voiceoverWpm": 140,
+    "contentPillars": ["honest_compare", "education", "product_spotlight", "trust_building"],
+    "styleExamples": [],
+    "bannedPhrases": [
+      "racun banget",
+      "racun shopee",
+      "racun tiktok",
+      "wajib checkout",
+      "langsung checkout",
+      "buruan checkout",
+      "auto checkout",
+      "worth it banget",
+      "gak nyesel beli",
+      "nggak nyesel",
+      "kalian wajib punya",
+      "kalian harus punya",
+      "no debat",
+      "best seller banget",
+      "murah banget sumpah",
+      "jangan sampai kehabisan",
+      "auto glowing",
+      "auto cantik",
+      "auto putih",
+      "auto mulus",
+      "spill dong",
+      "the best pokoknya",
+      "rekomen banget",
+      "hidden gem"
+    ]
+  },
+  "forbiddenClaimsPreset": {
+    "_note": "Disuntikkan ke brief.forbiddenClaims sesuai kategori. Checklist internal, bukan salinan kebijakan resmi platform — cek ulang berkala.",
+    "all": [
+      "dijamin 100%",
+      "paling murah se-Indonesia",
+      "nomor 1 di Indonesia (tanpa sumber)",
+      "stok tinggal sedikit (tanpa data)",
+      "harga naik besok (tanpa data)"
+    ],
+    "skincare_beauty": [
+      "menyembuhkan",
+      "mengobati",
+      "permanen",
+      "memutihkan dalam X hari",
+      "menghilangkan jerawat total",
+      "aman untuk semua jenis kulit (tanpa uji)",
+      "setara klinik / dokter",
+      "tanpa efek samping"
+    ],
+    "gadget_elektronik": [
+      "tahan air (tanpa rating IP resmi)",
+      "baterai seharian (tanpa angka dari spek)",
+      "lebih bagus dari merek X (menjatuhkan merek)"
+    ],
+    "fashion": [
+      "bahan premium (tanpa info bahan)",
+      "pasti cocok semua badan",
+      "anti luntur (tanpa bukti)"
+    ]
+  },
+  "trendPulsePresets": [
+    { "category": "skincare_beauty", "platforms": ["tiktok", "shopee"] },
+    { "category": "gadget_elektronik", "platforms": ["tiktok", "shopee"] },
+    { "category": "fashion", "platforms": ["tiktok", "shopee"] }
+  ]
+}

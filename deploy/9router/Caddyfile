@@ -1,0 +1,18 @@
+{$DOMAIN} {
+	encode gzip
+
+	# Hanya API OpenAI-compatible yang publik. Key 9router wajib (REQUIRE_API_KEY=true di .env).
+	@api path /v1/*
+	handle @api {
+		# flush_interval -1: streaming SSE langsung diteruskan (script_draft)
+		# UPSTREAM default = container 9router (docker-compose.yml); server yang sudah ada memakai localhost:20128
+		reverse_proxy {$UPSTREAM:9router:20128} {
+			flush_interval -1
+		}
+	}
+
+	# Dashboard & semua path lain tidak dibuka ke internet.
+	handle {
+		respond "Not found" 404
+	}
+}

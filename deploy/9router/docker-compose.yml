@@ -1,0 +1,41 @@
+# 9router di VPS untuk Affiliate Script Studio.
+# - 9router hanya mendengar di 127.0.0.1 (dashboard dibuka lewat SSH tunnel, tidak publik).
+# - Caddy memasang HTTPS otomatis (Let's Encrypt) dan HANYA meneruskan /v1/* ke internet.
+# Jalankan: ./setup.sh <domain> lalu: docker compose up -d
+services:
+  9router:
+    image: decolua/9router:latest
+    container_name: 9router
+    restart: always
+    env_file: .env
+    environment:
+      DATA_DIR: /app/data
+      PORT: "20128"
+      HOSTNAME: "0.0.0.0"
+      NODE_ENV: production
+    ports:
+      - "127.0.0.1:20128:20128" # dashboard + API, hanya untuk SSH tunnel
+      - "127.0.0.1:1455:1455" # callback login OAuth (mis. Codex), hanya untuk SSH tunnel
+    volumes:
+      - 9router-data:/app/data
+
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    restart: always
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - 9router
+
+volumes:
+  9router-data:
+  caddy-data:
+  caddy-config:
